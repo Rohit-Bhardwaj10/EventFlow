@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Navbar from "./components/navbar/page";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -27,7 +28,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        {/* <Navbar /> */}
+        <div
+  className="min-h-screen w-full text-white"
+  style={{
+    background: "linear-gradient(135deg, #0f2027 0%, #2c5364 100%)"
+  }}
+>
+  {children}
+</div>
       </body>
     </html>
   );

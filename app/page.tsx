@@ -1,103 +1,339 @@
-import Image from "next/image";
+"use client";
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Calendar, Star, ArrowRight, Play } from 'lucide-react';
+import SimpleNavbar from './components/navbar/page';
+import { TypewriterEffect } from './components/ui/typewriter-effect';
 
-export default function Home() {
+interface MousePosition {
+  x: number;
+  y: number;
+}
+
+interface Particle {
+  id: number;
+  left: number;
+  top: number;
+  delay: number;
+}
+
+interface Stat {
+  number: string;
+  label: string;
+}
+
+const Particles: React.FC = () => {
+  const particles: Particle[] = Array.from({ length: 50 }, (_, i) => ({
+    id: i,
+    left: Math.random() * 100,
+    top: Math.random() * 100,
+    delay: Math.random() * 3
+  }));
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {particles.map((particle) => (
+        <motion.div
+          key={particle.id}
+          className="absolute w-0.5 h-0.5 bg-white rounded-full opacity-60"
+          style={{
+            left: `${particle.left}%`,
+            top: `${particle.top}%`,
+          }}
+          animate={{
+            opacity: [0.3, 1, 0.3],
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            delay: particle.delay,
+            ease: "easeInOut"
+          }}
         />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      ))}
     </div>
   );
-}
+};
+
+const EventFlowHero: React.FC = () => {
+  const [mousePosition, setMousePosition] = useState<MousePosition>({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const updateMousePosition = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener('mousemove', updateMousePosition);
+    return () => window.removeEventListener('mousemove', updateMousePosition);
+  }, []);
+
+  const stats: Stat[] = [
+    { number: "10K+", label: "Events Created" },
+    { number: "50K+", label: "Happy Users" },
+    { number: "99.9%", label: "Uptime" }
+  ];
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.3
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 50, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 12
+      }
+    }
+  };
+
+// Simple Navbar that blends with the background
+
+  return (
+    <div className="min-h-screen overflow-hidden relative bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900">
+      {/* Animated Background */}
+      <div className="absolute inset-0">
+        <motion.div 
+          className="absolute inset-0 linear-gradient(135deg, #0f2027 0%, #2c5364 100%)"
+          animate={{
+            background: [
+              "linear-gradient(135deg, #0f2027 0%, #2c5364 100%)", 
+              "linear-gradient(135deg, #2c5364 0%, #0f2027 100%)",
+              "linear-gradient(135deg, #0f2027 0%, #2c5364 100%)",
+            ]
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+      </div>
+
+      {/* Floating Orbs */}
+      <motion.div
+        className="absolute w-72 h-72 rounded-full opacity-20 blur-3xl"
+        style={{
+          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+          top: "10%",
+          left: "10%"
+        }}
+        animate={{
+          y: [0, -30, 15, 0],
+          x: [0, 20, -10, 0],
+          rotate: [0, 120, 240, 360]
+        }}
+        transition={{
+          duration: 20,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+      
+      <motion.div
+        className="absolute w-48 h-48 rounded-full opacity-20 blur-3xl"
+        style={{
+          background: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+          top: "60%",
+          right: "20%"
+        }}
+        animate={{
+          y: [0, 25, -15, 0],
+          x: [0, -15, 10, 0],
+          rotate: [0, -120, -240, -360]
+        }}
+        transition={{
+          duration: 18,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: -7
+        }}
+      />
+
+      <motion.div
+        className="absolute w-60 h-60 rounded-full opacity-20 blur-3xl"
+        style={{
+          background: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+          bottom: "20%",
+          left: "20%"
+        }}
+        animate={{
+          y: [0, -20, 10, 0],
+          x: [0, 15, -5, 0],
+          rotate: [0, 90, 180, 270, 360]
+        }}
+        transition={{
+          duration: 22,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: -14
+        }}
+      />
+
+      {/* Particles */}
+      <Particles />
+
+      {/* Mouse Follower */}
+      <motion.div
+        className="fixed w-6 h-6 pointer-events-none z-50 mix-blend-difference rounded-full"
+        style={{
+          background: "radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%)",
+        }}
+        animate={{
+          x: mousePosition.x - 12,
+          y: mousePosition.y - 12,
+        }}
+        transition={{
+          type: "spring",
+          damping: 30,
+          stiffness: 200,
+          mass: 0.5
+        }}
+      />
+
+
+      <SimpleNavbar />
+
+      {/* Hero Content */}
+      <div className="flex items-center justify-center min-h-screen px-6 relative z-10">
+        <motion.div 
+          className="max-w-6xl mx-auto text-center"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {/* Main Headline */}
+          <motion.h1 
+            className="text-6xl md:text-8xl font-black text-white mb-6 leading-tight lubrifont"
+            variants={itemVariants}
+          >
+            Campus events
+            <br />
+            <motion.span 
+              className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-pink-400 bg-clip-text text-transparent"
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1.2, delay: 0.8 }}
+            > 
+              without the chaos
+            </motion.span>
+          </motion.h1>
+
+          {/* Subtitle */}
+          <motion.p 
+            className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed"
+            variants={itemVariants}
+          >
+            Transform how your organization plans, manages, and executes events including payments. 
+            From intimate gatherings to campus-wide celebrations, all managed by you, with seamless payments built in.
+          </motion.p>
+
+          {/* CTA Buttons */}
+          <motion.div 
+            className="flex flex-col sm:flex-row gap-6 justify-center items-center"
+            variants={itemVariants}
+          >
+            <motion.button 
+              className="bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white px-10 py-4 rounded-2xl font-bold text-lg transition-all flex items-center space-x-3 shadow-2xl"
+              whileHover={{ 
+                scale: 1.05,
+                boxShadow: "0 20px 50px rgba(139, 92, 246, 0.4)"
+              }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400 }}
+            >
+              <span>Create Your First Event</span>
+              <motion.div
+                whileHover={{ x: 5 }}
+                transition={{ type: "spring", stiffness: 400 }}
+              >
+                <ArrowRight className="w-5 h-5" />
+              </motion.div>
+            </motion.button>
+          </motion.div>
+
+          {/* Stats */}
+          <motion.div 
+            className="grid grid-cols-3 gap-8 mt-16 max-w-2xl mx-auto"
+            variants={itemVariants}
+          >
+            <motion.div 
+              className="text-center"
+              whileHover={{ scale: 1.1 }}
+              transition={{ type: "spring", stiffness: 400 }}
+            >
+              <motion.div 
+                className="text-3xl font-bold text-white mb-1"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 200, 
+                  delay: 1.4 
+                }}
+              >
+                100%
+              </motion.div>
+              <div className="text-gray-400 text-sm">Customizable</div>
+            </motion.div>
+            <motion.div 
+              className="text-center"
+              whileHover={{ scale: 1.1 }}
+              transition={{ type: "spring", stiffness: 400 }}
+            >
+              <motion.div 
+                className="text-3xl font-bold text-white mb-1"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 200, 
+                  delay: 1.5 
+                }}
+              >
+                24/7
+              </motion.div>
+              <div className="text-gray-400 text-sm">Support</div>
+            </motion.div>
+            <motion.div 
+              className="text-center"
+              whileHover={{ scale: 1.1 }}
+              transition={{ type: "spring", stiffness: 400 }}
+            >
+              <motion.div 
+                className="text-3xl font-bold text-white mb-1"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 200, 
+                  delay: 1.6 
+                }}
+              >
+                100%            
+              </motion.div>
+              <div className="text-gray-400 text-sm">Payments Supprot</div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
+      </div>
+    </div>
+  );
+};
+
+
+
+
+export default EventFlowHero;
+
